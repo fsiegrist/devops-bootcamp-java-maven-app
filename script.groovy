@@ -1,19 +1,19 @@
+#!/usr/bin/env groovy
+
 def buildJar() {
     echo "building the application..."
     sh 'mvn package'
 } 
 
-def buildImage() {
-    echo "building the docker image..."
-    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-        sh 'docker build -t nanajanashia/demo-app:jma-2.0 .'
-        sh "echo $PASS | docker login -u $USER --password-stdin"
-        sh 'docker push nanajanashia/demo-app:jma-2.0'
+def buildAndPublishImage() {
+    withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+        echo "building the docker image..."
+        sh 'docker build -t fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-1.0.1 .'
+                        
+        echo "publishing the docker image..."
+        sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
+        sh 'docker push fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-1.0.1'
     }
-} 
-
-def deployApp() {
-    echo 'deploying the application...'
 } 
 
 return this
