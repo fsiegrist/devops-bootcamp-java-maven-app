@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-library identifier: 'jenkins-shared-library@1.0', retriever: modernSCM(
+library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
   [
     $class: 'GitSCMSource',
     remote: 'https://github.com/fsiegrist/devops-bootcamp-jenkins-shared-library.git',
