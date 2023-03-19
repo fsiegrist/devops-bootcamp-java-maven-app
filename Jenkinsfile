@@ -1,26 +1,16 @@
 #!/usr/bin/env groovy
 
-//def gv
-
 pipeline {
     agent any
     tools {
         maven 'maven-3.9'
     }
     stages {
-//        stage("init") {
-//            steps {
-//                script {
-//                    gv = load "script.groovy"
-//                }
-//            }
-//        }
         stage("Build Application JAR") {
             steps {
                 script {
                     echo "building the application..."
                     sh 'mvn package'
-                    //gv.buildJar()
                 }
             }
         }
@@ -35,7 +25,6 @@ pipeline {
                         sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
                         sh 'docker push fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-1.0.1'
                     }
-                  //gv.buildAndPublishImage()
                 }
             }
         }
