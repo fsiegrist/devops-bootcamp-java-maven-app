@@ -24,7 +24,7 @@ pipeline {
         stage("Build and Publish Docker Image") {
             steps {
                 script {
-                    buildAndPublishImage()
+                    buildAndPublishImage 'fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-1.0.3'
                 }
             }
         }
