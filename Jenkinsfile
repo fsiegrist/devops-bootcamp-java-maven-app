@@ -9,7 +9,7 @@ pipeline {
         stage("Build Application JAR") {
             steps {
                 script {
-                    echo "building the application..."
+                    echo "building the application (triggered by webhooks)..."
                     sh 'mvn package'
                 }
             }
