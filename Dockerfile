@@ -7,6 +7,6 @@ RUN addgroup -S mygroup && adduser -S myuser -G mygroup
 RUN chown -R myuser:mygroup /opt/bootcamp-java-maven-app
 USER myuser
 
-COPY ./target/java-maven-app-1.0.0.jar /opt/bootcamp-java-maven-app
+COPY ./target/java-maven-app-*.jar /opt/bootcamp-java-maven-app
 
-CMD ["java", "-jar", "/opt/bootcamp-java-maven-app/java-maven-app-1.0.0.jar"]
+CMD java -jar /opt/bootcamp-java-maven-app/java-maven-app-*.jar

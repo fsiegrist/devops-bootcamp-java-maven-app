@@ -6,11 +6,25 @@ pipeline {
         maven 'maven-3.9'
     }
     stages {
+        stage("Increment Version") {
+            steps {
+                script {
+                    echo 'incrementing the bugfix version of the application...'
+                    sh 'mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit'
+      
+                    def matcher = readFile('pom.xml') =~ '<version>(.*)</version>'
+                    def version = matcher[0][1]
+                    env.IMAGE_TAG = "$version-$BUILD_NUMBER"
+                }
+            }
+        }
         stage("Build Application JAR") {
             steps {
                 script {
-                    echo "building the application (triggered by webhooks)..."
-                    sh 'mvn package'
+                    echo "building the application..."
+                    sh 'mvn clean package'
                 }
             }
         }
@@ -19,11 +33,11 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
                         echo "building the docker image..."
-                        sh 'docker build -t fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-1.0.1 .'
+                        sh "docker build -t fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG} ."
                         
                         echo "publishing the docker image..."
                         sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
-                        sh 'docker push fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-1.0.1'
+                        sh "docker push fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG}"
                     }
                 }
             }
