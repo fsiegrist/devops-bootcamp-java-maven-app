@@ -42,5 +42,17 @@ pipeline {
                 }
             }
         }
+        stage('Commit Version Update') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'GitHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/fsiegrist/devops-bootcamp-java-maven-app.git"
+                        sh 'git add .'
+                        sh 'git commit -m "ci: version bump'
+                        sh 'git push origin HEAD:main'
+                    }
+                }
+            }
+        }
     }   
 }
