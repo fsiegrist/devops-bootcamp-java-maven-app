@@ -14,8 +14,7 @@ pipeline {
                         -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
                         versions:commit'
       
-                    def matcher = readFile('pom.xml') =~ '<version>(.*)</version>'
-                    def version = matcher[0][1]
+                    def version = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
                     env.IMAGE_TAG = "$version-$BUILD_NUMBER"
                 }
             }
