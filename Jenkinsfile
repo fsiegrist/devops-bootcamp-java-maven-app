@@ -45,7 +45,7 @@ pipeline {
             steps {
                 script {
                     echo 'deploying Docker image to EC2 server...'
-                    def dockerCmd = "docker run -d -p 3000:3080 fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG}"
+                    def dockerCmd = "docker run -d -p 8000:8080 fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG}"
                     sshagent(['ec2-server-key']) {
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${dockerCmd}"
                     }
