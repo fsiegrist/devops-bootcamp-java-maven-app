@@ -41,13 +41,24 @@ pipeline {
                 }
             }
         }
+        stage('Deploy Application') {
+            steps {
+                script {
+                    echo 'deploying Docker image to EC2 server...'
+                    def dockerCmd = "docker run -d -p 3000:3080 fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG}"
+                    sshagent(['ec2-server-key']) {
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${dockerCmd}"
+                    }
+                }
+            }
+        }
         stage('Commit Version Update') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'GitHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/fsiegrist/devops-bootcamp-java-maven-app.git"
                         sh 'git add .'
-                        sh 'git commit -m "[ci skip]: version bump"'
+                        sh 'git commit -m "jenkins: version bump"'
                         sh 'git push origin HEAD:main'
                     }
                 }
