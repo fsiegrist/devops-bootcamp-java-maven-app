@@ -45,13 +45,13 @@ pipeline {
             steps {
                 script {
                     echo 'deploying Docker image to EC2 server...'
-                    // def dockerComposeCmd = "IMAGE_TAG=${IMAGE_TAG} docker-compose -f docker-compose.yaml up -d"
-                    def shellCmd = "bash ./server-cmds.sh ${IMAGE_TAG}"
+                    def dockerComposeCmd = "IMAGE_TAG=${IMAGE_TAG} docker-compose -f docker-compose.yaml up -d"
+                    // def shellCmd = "bash ./server-cmds.sh ${IMAGE_TAG}"
                     sshagent(['ec2-server-key']) {
-                        // sh 'scp docker-compose.yaml ec2-user@35.156.226.244:/home/ec2-user'
-                        // sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${dockerComposeCmd}"
-                        sh 'scp server-cmds.sh docker-compose.yaml ec2-user@35.156.226.244:/home/ec2-user'
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${shellCmd}"
+                        sh 'scp -o StrictHostKeyChecking=no docker-compose.yaml ec2-user@35.156.226.244:/home/ec2-user'
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${dockerComposeCmd}"
+                        // sh 'scp -o StrictHostKeyChecking=no server-cmds.sh docker-compose.yaml ec2-user@35.156.226.244:/home/ec2-user'
+                        // sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${shellCmd}"
                     }
                 }
             }
