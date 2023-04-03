@@ -4,10 +4,3 @@ services:
     image: fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG}
     ports:
       - 8000:8080
-
-  postgres:
-    image: postgres:13
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD:my-pwd
