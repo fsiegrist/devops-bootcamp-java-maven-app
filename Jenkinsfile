@@ -42,17 +42,16 @@ pipeline {
             }
         }
         stage('Deploy Application') {
+            environment {
+                AWS_ACCESS_KEY_ID = credentials('jenkins-aws_access_key_id')
+                AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws_secret_access_key')
+                APP_NAME = 'java-maven-app'
+            }
             steps {
                 script {
-                    echo 'deploying Docker image to EC2 server...'
-                    // def dockerComposeCmd = "IMAGE_TAG=${IMAGE_TAG} docker-compose -f docker-compose.yaml up -d"
-                    def shellCmd = "bash ./server-cmds.sh ${IMAGE_TAG}"
-                    sshagent(['ec2-server-key']) {
-                        // sh 'scp docker-compose.yaml ec2-user@35.156.226.244:/home/ec2-user'
-                        // sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${dockerComposeCmd}"
-                        sh 'scp server-cmds.sh docker-compose.yaml ec2-user@35.156.226.244:/home/ec2-user'
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@35.156.226.244 ${shellCmd}"
-                    }
+                    echo 'deploying Docker image to EKS cluster...'
+                    sh 'envsubst < kubernetes/deployment.yaml | kubectl apply -f -'
+                    sh 'envsubst < kubernetes/service.yaml | kubectl apply -f -'
                 }
             }
         }
