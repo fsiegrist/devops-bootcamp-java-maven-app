@@ -5,6 +5,10 @@ pipeline {
     tools {
         maven 'maven-3.9'
     }
+    environment {
+        DOCKER_REPO_HOST = '369076538622.dkr.ecr.eu-central-1.amazonaws.com'
+        DOCKER_REPO_URI = "${DOCKER_REPO_HOST}/java-maven-app"
+    }
     stages {
         stage("Increment Version") {
             steps {
@@ -30,13 +34,13 @@ pipeline {
         stage("Build and Publish Docker Image") {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         echo "building the docker image..."
-                        sh "docker build -t fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG} ."
+                        sh "docker build -t ${DOCKER_REPO_URI}:${IMAGE_TAG} ."
                         
                         echo "publishing the docker image..."
-                        sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
-                        sh "docker push fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG}"
+                        sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin ${DOCKER_REPO_HOST}"
+                        sh "docker push ${DOCKER_REPO_URI}:${IMAGE_TAG}"
                     }
                 }
             }
@@ -62,7 +66,7 @@ pipeline {
                         sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/fsiegrist/devops-bootcamp-java-maven-app.git"
                         sh 'git add .'
                         sh 'git commit -m "jenkins: version bump"'
-                        sh 'git push origin HEAD:main'
+                        sh 'git push origin HEAD:complete-pipeline-eks-ecr'
                     }
                 }
             }

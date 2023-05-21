@@ -15,10 +15,10 @@ spec:
         app: $APP_NAME
     spec:
       imagePullSecrets:
-        - name: my-registry-key
+        - name: aws-registry-key
       containers:
         - name: $APP_NAME
-          image: fsiegrist/fesi-repo:devops-bootcamp-java-maven-app-${IMAGE_TAG}
+          image: ${DOCKER_REPO_URI}:${IMAGE_TAG}
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
