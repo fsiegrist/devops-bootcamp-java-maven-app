@@ -1,9 +1,15 @@
 terraform {
+  required_version = ">= 1.2.0"
   required_providers {
     aws = {
       source = "hashicorp/aws"
       version = "4.67.0"
     }
+  }
+  backend "s3" {
+    bucket = "my-devops-bootcamp-tfstate-bucket"
+    key = "myapp/state.tfstate"
+    region = "eu-central-1"
   }
 }
 
