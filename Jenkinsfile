@@ -26,7 +26,7 @@ pipeline {
                 script {
                     echo 'fetching available image versions'
                     def result = sh(script: """
-                        pip3 install -r python/requirements.txt
+                        /usr/bin/pip install -r python/requirements.txt
                         python3 python/get-images.py
                     """, returnStdout: true).trim()
                     // split returns an Array, but choices expects either List or String, so we do "as List"
@@ -43,7 +43,7 @@ pipeline {
                 script {
                     echo 'deploying docker image to EC2...'
                     def result = sh(script: """
-                        pip3 install -r python/requirements.txt
+                        /usr/bin/pip install -r python/requirements.txt
                         python3 python/deploy.py
                     """, returnStdout: true).trim()
                     echo result
@@ -55,7 +55,7 @@ pipeline {
                 script {
                     echo 'validating that the application was deployed successfully...'
                     def result = sh(script: """
-                        pip3 install -r python/requirements.txt
+                        /usr/bin/pip install -r python/requirements.txt
                         python3 python/validate.py
                     """, returnStdout: true).trim()
                     echo result
