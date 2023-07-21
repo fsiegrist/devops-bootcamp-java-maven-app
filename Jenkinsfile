@@ -23,33 +23,42 @@ pipeline {
     stages {
         stage('select image version') {
             steps {
-               script {
-                  echo 'fetching available image versions'
-                  def result = sh(script: 'python3 python/get-images.py', returnStdout: true).trim()
-                  // split returns an Array, but choices expects either List or String, so we do "as List"
-                  def tags = result.split('\n') as List
-                  version_to_deploy = input message: 'Select version to deploy', ok: 'Deploy', parameters: [choice(name: 'Select version', choices: tags)]
-                  // put together the full image name
-                  env.DOCKER_IMAGE = "${ECR_REGISTRY}/${ECR_REPO_NAME}:${version_to_deploy}"
-                  echo env.DOCKER_IMAGE
-               }
+                script {
+                    echo 'fetching available image versions'
+                    def result = sh(script: """
+                        pip install -r python/requirements.txt
+                        python3 python/get-images.py
+                    """, returnStdout: true).trim()
+                    // split returns an Array, but choices expects either List or String, so we do "as List"
+                    def tags = result.split('\n') as List
+                    version_to_deploy = input message: 'Select version to deploy', ok: 'Deploy', parameters: [choice(name: 'Select version', choices: tags)]
+                    // put together the full image name
+                    env.DOCKER_IMAGE = "${ECR_REGISTRY}/${ECR_REPO_NAME}:${version_to_deploy}"
+                    echo env.DOCKER_IMAGE
+                }
             }
         }
         stage('deploying image') {
             steps {
                 script {
-                   echo 'deploying docker image to EC2...'
-                   def result = sh(script: 'python3 python/deploy.py', returnStdout: true).trim()
-                   echo result
+                    echo 'deploying docker image to EC2...'
+                    def result = sh(script: """
+                        pip install -r python/requirements.txt
+                        python3 python/deploy.py
+                    """, returnStdout: true).trim()
+                    echo result
                 }
             }
         }
         stage('validate deployment') {
             steps {
                 script {
-                   echo 'validating that the application was deployed successfully...'
-                   def result = sh(script: 'python3 python/validate.py', returnStdout: true).trim()
-                   echo result
+                    echo 'validating that the application was deployed successfully...'
+                    def result = sh(script: """
+                        pip install -r python/requirements.txt
+                        python3 python/validate.py
+                    """, returnStdout: true).trim()
+                    echo result
                 }
             }
         }
