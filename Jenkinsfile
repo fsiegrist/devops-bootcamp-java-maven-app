@@ -38,7 +38,7 @@ pipeline {
         stage('deploying image') {
             steps {
                 script {
-                    echo "deploying docker image to EC2... ${SSH_KEY_FILE}"
+                    echo 'deploying docker image to EC2...'
                     def result = sh(script: 'python3 python/deploy.py', returnStdout: true).trim()
                     echo result
                 }
