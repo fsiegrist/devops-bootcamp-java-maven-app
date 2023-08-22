@@ -29,15 +29,16 @@ pipeline {
                     remote.host = ANSIBLE_SERVER
                     remote.allowAnyHosts = true
 
-                    sshagent(['ansible-server-key']) {
-                        sh 'ssh root@$ANSIBLE_SERVER "ansible-playbook my-playbook.yaml"'
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ansible-server-key', keyFileVariable: 'keyfile', usernameVariable: 'user')]){
+                        remote.user = user
+                        remote.identityFile = keyfile
+                        // sshScript remote: remote, script: "prepare-ansible-server.sh"
+                        sshCommand remote: remote, command: "ansible-playbook my-playbook.yaml"
                     }
 
-                    // withCredentials([sshUserPrivateKey(credentialsId: 'ansible-server-key', keyFileVariable: 'keyfile', usernameVariable: 'user')]){
-                    //     remote.user = user
-                    //     remote.identityFile = keyfile
-                    //     // sshScript remote: remote, script: "prepare-ansible-server.sh"
-                    //     sshCommand remote: remote, command: "ansible-playbook my-playbook.yaml"
+                    // or using sshagent
+                    // sshagent(['ansible-server-key']) {
+                    //     sh 'ssh root@$ANSIBLE_SERVER "ansible-playbook my-playbook.yaml"'
                     // }
                 }
             }
