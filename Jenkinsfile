@@ -31,7 +31,7 @@ pipeline {
 
                     withCredentials([sshUserPrivateKey(credentialsId: 'ansible-server-key', keyFileVariable: 'keyfile', usernameVariable: 'user')]){
                         echo user
-                        echo keyfile.getPath()
+                        echo keyfile
                         // remote.user = user
                         // remote.identityFile = keyfile
                         // // sshScript remote: remote, script: "prepare-ansible-server.sh"
