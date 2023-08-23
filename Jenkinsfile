@@ -33,7 +33,7 @@ pipeline {
                         remote.user = user
                         remote.identityFile = keyfile
                         // sshScript remote: remote, script: "prepare-ansible-server.sh"
-                        sshCommand remote: remote, command: "ansible-playbook my-playbook.yaml"
+                        sshCommand remote: remote, sudo: true, command: "ansible-playbook my-playbook.yaml"
                     }
 
                     // or using sshagent
